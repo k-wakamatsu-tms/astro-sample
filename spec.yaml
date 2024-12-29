@@ -1,0 +1,192 @@
+name: 結婚相談所連盟サイト
+
+# サイト全体の構成
+structure:
+  pages:
+    index:
+      title: トップページ
+      description: 結婚相談所連盟の説明
+      components:
+        - HeroSection: # 連盟の概要などを表示
+            type: astro
+        - FeaturedCounselorCarousel: # おすすめ相談所のカルーセルリスト
+            type: astro
+            data_source: counselors_api # モックAPIのエンドポイント
+            limit: 5 # 表示件数
+        - FeatureSection: # 連盟の特長など
+            type: astro
+    counselors: # 加盟相談所リストと検索の専用ページ
+      title: 加盟相談所一覧
+      description: 全国の加盟相談所リスト
+      components:
+        - CounselorList: # 加盟相談所リスト
+            type: astro
+            data_source: counselors_api # モックAPIのエンドポイント
+        - CounselorSearch: # 相談所検索フォーム
+            type: react
+  collections:
+    counselor_detail: # 結婚相談所の詳細ページ
+      slug: "counselors/[id]" # 例: /counselors/1
+      page: counselor-detail
+    blog_post: # 各相談所のブログポスト
+      slug: "counselors/[counselor_id]/blogs/[blog_id]" # 例: /counselors/1/blogs/1
+      page: blog-post
+  partials:
+    - Header
+    - Footer
+
+# データソース
+data_sources:
+  counselors_api:
+    type: mock_api
+    endpoint: "/api/counselors"
+  counselor_detail_api:
+    type: mock_api
+    endpoint: "/api/counselors/[id]"
+  counselor_blogs_api:
+    type: mock_api
+    endpoint: "/api/counselors/[counselor_id]/blogs"
+  blog_detail_api:
+    type: mock_api
+    endpoint: "/api/counselors/[counselor_id]/blogs/[blog_id]"
+  prefectures_api: # 都道府県リストのAPI (例)
+    type: mock_api
+    endpoint: "/api/prefectures"
+  regions_api: # 地方リストのAPI (例)
+    type: mock_api
+    endpoint: "/api/regions"
+
+# ページごとの詳細設定
+pages_config:
+  index:
+    layout: layouts/BaseLayout.astro
+  counselors:
+    layout: layouts/BaseLayout.astro
+  counselor-detail:
+    layout: layouts/BaseLayout.astro
+    data_source: counselor_detail_api
+    isr: true # データ更新頻度を考慮してISRを適用
+  blog-post:
+    layout: layouts/BaseLayout.astro
+    data_source: blog_detail_api
+    isr: true # データ更新頻度を考慮してISRを適用
+
+# コンポーネント
+components:
+  # トップページ用
+  HeroSection:
+    type: astro
+  FeaturedCounselorCarousel: # おすすめ相談所のカルーセル
+    type: astro
+    components:
+      - CounselorCard # 個々の相談所カード
+    props:
+      - limit: number
+  FeatureSection:
+    type: astro
+
+  # 加盟相談所一覧ページ用
+  CounselorList:
+    type: astro
+    components:
+      - CounselorCard # 個々の相談所カード
+  CounselorSearch:
+    type: react
+    props:
+      - keyword: string
+      - prefecture: string | null
+      - region: string | null
+
+  # 相談所詳細ページ用
+  CounselorDetail:
+    type: astro
+    components:
+      - CounselorInfo: # 相談所の基本情報
+      - CounselorBlogs: # 相談所のブログリスト (Reactコンポーネントで動的に表示)
+        type: react
+        data_source: counselor_blogs_api
+      - ContactFormSection: # 資料請求、面談予約フォーム
+        type: astro
+
+  # 相談所カード
+  CounselorCard:
+    type: astro
+
+  # ブログリスト
+  CounselorBlogs:
+    type: react
+    props:
+      - counselorId: string
+
+  # ブログポスト詳細
+  BlogPostDetail:
+    type: astro
+
+  # フォームセクション
+  ContactFormSection:
+    type: astro
+    components:
+      - RequestInfoForm: # 資料請求フォーム (Reactでバリデーションなど)
+        type: react
+      - BookingForm: # 面談予約フォーム (Reactでバリデーションなど)
+        type: react
+
+  # 資料請求フォーム
+  RequestInfoForm:
+    type: react
+    props:
+      - counselorId: string # 相談所ID
+
+  # 面談予約フォーム
+  BookingForm:
+    type: react
+    props:
+      - counselorId: string # 相談所ID
+
+# レイアウト
+layouts:
+  BaseLayout:
+    slots:
+      - Header
+      - Main
+      - Footer
+
+# ユーティリティ
+utils:
+  api_client: # APIクライアント
+    description: APIをfetchする共通関数
+
+# ステート管理 (Reactコンポーネント用)
+state:
+  favorite_counselors: # お気に入り相談所リスト
+    type: local_storage
+
+# スタイリング
+styling:
+  framework: tailwindcss
+  config_file: tailwind.config.cjs
+  css_file: src/styles/global.css
+
+# ビルド設定
+build:
+  rendering: isr # 基本はISRを使用
+  # 特定のページでオンデマンドレンダリングが必要な場合はpages_configで設定
+
+# 今後の拡張
+future_enhancements:
+  - 会員登録機能
+  - 口コミ機能
+  - 地図連携
+
+# 技術スタック
+tech_stack:
+  - astro
+  - react
+  - tailwindcss
+
+# 備考
+notes:
+  - モックAPIのレスポンス構造を定義する必要がある
+  - 本番CMSのAPIエンドポイントとレスポンス構造に合わせて`data_sources`を更新する
+  - エラーハンドリングやローディング表示などを考慮する
+  - 都道府県リスト、地方リストのAPIエンドポイントとレスポンス構造を定義する必要がある
