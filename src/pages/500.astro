@@ -1,0 +1,25 @@
+---
+import Header from "../components/Header.astro";
+import Layout from "../layouts/Layout.astro";
+
+interface Props {
+	error: unknown;
+}
+
+const { error } = Astro.props;
+---
+
+<Layout title="500 - 結婚相談所連盟">
+	<Header slot="header" />
+	<div class="bg-white py-24 sm:py-32">
+		<div class="mx-auto max-w-7xl px-6 lg:px-8">
+			<h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">500 - 結婚相談所連盟</h1>
+			<p class="mt-2 text-lg leading-8 text-gray-600">
+				サーバーエラーが発生しました。
+			</p>
+			<p class="mt-2 text-lg leading-8 text-gray-600">
+				{error instanceof Error ? error.message : "不明なエラーが発生しました。"}
+			</p>
+		</div>
+	</div>
+</Layout>
