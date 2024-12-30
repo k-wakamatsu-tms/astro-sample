@@ -1,0 +1,52 @@
+---
+import type { Counselor } from "../types/counselor";
+
+interface Props {
+	counselor: Counselor;
+}
+
+const { counselor } = Astro.props;
+---
+
+<article class="bg-white">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
+    <div class="mx-auto max-w-2xl lg:mx-0">
+      <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{counselor.name}</h1>
+      <p class="mt-2 text-lg leading-8 text-gray-600">{counselor.prefecture} / {counselor.region}</p>
+    </div>
+
+    <div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2">
+      <div>
+        <img
+          src={counselor.imageUrl}
+          alt={counselor.name}
+          class="aspect-[16/9] w-full rounded-2xl object-cover sm:aspect-[3/2] lg:aspect-[4/3]"
+        />
+      </div>
+      <div>
+        <div class="prose prose-lg">
+          <h2 class="text-xl font-semibold text-gray-900">相談所について</h2>
+          <p class="mt-4 text-gray-600">{counselor.description}</p>
+        </div>
+
+        <div class="mt-10">
+          <h2 class="text-xl font-semibold text-gray-900">お問い合わせ</h2>
+          <div class="mt-6 flex gap-x-6">
+            <a
+              href="#contact-form"
+              class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              資料請求・お問い合わせ
+            </a>
+            <a
+              href="#booking-form"
+              class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-indigo-600 shadow-sm ring-1 ring-inset ring-indigo-600 hover:bg-indigo-50"
+            >
+              無料相談を予約
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</article> 

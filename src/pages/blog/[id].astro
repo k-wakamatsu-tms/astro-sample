@@ -1,0 +1,54 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+
+import { getCollection } from "astro:content";
+
+export const prerender = false;
+
+const { id } = Astro.params;
+const blogs = await getCollection("blogs");
+const post = blogs.find((blog) => blog.data.id === id);
+
+if (!post) {
+	return Astro.redirect("/404");
+}
+---
+
+<Layout title={`${post.data.title} - 結婚相談所連盟`}>
+  <Header slot="header" />
+  <div class="bg-white py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl">
+        <div class="relative">
+          <img
+            src={post.data.imageUrl || '/images/blog-placeholder.jpg'}
+            alt={post.data.title}
+            class="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover"
+          />
+          <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
+        </div>
+        <article class="mt-16">
+          <div class="flex items-center gap-x-4 text-xs">
+            <time datetime={post.data.publishedAt} class="text-gray-500">
+              {new Date(post.data.publishedAt).toLocaleDateString('ja-JP')}
+            </time>
+            {post.data.tags.map((tag) => (
+              <span class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <h1 class="mt-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{post.data.title}</h1>
+          <div class="mt-8 prose prose-lg prose-indigo mx-auto">
+            {post.data.content.split('\n').map((paragraph: string) => (
+              <p class="mt-4 text-base leading-7 text-gray-600">{paragraph}</p>
+            ))}
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+  <Footer slot="footer" />
+</Layout> 

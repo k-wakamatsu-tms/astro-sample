@@ -1,0 +1,56 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { getCollection } from "astro:content";
+
+const { id } = Astro.params;
+
+const counselor = await getCollection("counselors").then((counselors) =>
+	counselors.find((counselor) => counselor.id === id),
+);
+
+if (!counselor) {
+	return Astro.redirect("/404");
+}
+---
+
+<Layout title={`${counselor.data.name} - 結婚相談所連盟`}>
+  <Header slot="header" />
+  <div class="bg-white">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
+      <div class="mx-auto max-w-2xl">
+        <div class="aspect-h-9 aspect-w-16 overflow-hidden rounded-lg">
+          <img
+            src={counselor.data.imageUrl}
+            alt={counselor.data.name}
+            class="w-full h-full object-cover"
+          />
+        </div>
+        <div class="mt-8">
+          <div class="flex items-center text-sm">
+            <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700">
+              {counselor.data.region}
+            </span>
+            <span class="ml-2 inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600">
+              {counselor.data.prefecture}
+            </span>
+          </div>
+          <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900">{counselor.data.name}</h1>
+          <p class="mt-4 text-lg leading-8 text-gray-600">{counselor.data.description}</p>
+        </div>
+        <div class="mt-8">
+          <a
+            href="/contact"
+            class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            無料相談を申し込む
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <Footer slot="footer" />
+</Layout> 

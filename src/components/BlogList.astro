@@ -1,0 +1,75 @@
+---
+import type { BlogPost } from "../data/blogs";
+import { blogPosts } from "../data/blogs";
+import { counselors } from "../data/counselors";
+
+interface Props {
+	counselorId?: string;
+	limit?: number;
+}
+
+const { counselorId, limit } = Astro.props;
+
+const filteredPosts = blogPosts
+	.filter((post) => !counselorId || post.counselorId === counselorId)
+	.slice(0, limit);
+
+const getCounselorName = (counselorId: string) => {
+	const counselor = counselors.find((c) => c.id === counselorId);
+	return counselor?.name || "";
+};
+
+const formatDate = (dateString: string) => {
+	return new Date(dateString).toLocaleDateString("ja-JP", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+};
+---
+
+<div class="mx-auto mt-16 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+  {
+    filteredPosts.map((post) => (
+      <article class="flex flex-col items-start">
+        <div class="relative w-full">
+          <img
+            src={post.imageUrl || '/images/blog-default.jpg'}
+            alt={post.title}
+            class="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
+          />
+          <div class="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
+        </div>
+        <div class="max-w-xl">
+          <div class="mt-8 flex items-center gap-x-4 text-xs">
+            <time datetime={post.publishedAt} class="text-gray-500">
+              {formatDate(post.publishedAt)}
+            </time>
+            <a
+              href={`/counselors/${post.counselorId}`}
+              class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+            >
+              {getCounselorName(post.counselorId)}
+            </a>
+          </div>
+          <div class="group relative">
+            <h3 class="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+              <a href={`/counselors/${post.counselorId}/blogs/${post.id}`}>
+                <span class="absolute inset-0" />
+                {post.title}
+              </a>
+            </h3>
+            <p class="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">{post.excerpt}</p>
+          </div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            {post.tags.map((tag) => (
+              <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </article>
+    ))
+  }
+</div> 

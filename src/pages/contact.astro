@@ -1,0 +1,116 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="お問い合わせ - 結婚相談所連盟">
+  <Header slot="header" />
+  <div class="bg-white py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <h1 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">お問い合わせ</h1>
+        <p class="mt-2 text-lg leading-8 text-gray-600">
+          ご質問・ご相談がございましたら、お気軽にお問い合わせください。
+        </p>
+      </div>
+      <form action="/api/contact" method="POST" class="mx-auto mt-16 max-w-xl">
+        <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+          <div class="sm:col-span-2">
+            <label for="name" class="block text-sm font-semibold leading-6 text-gray-900">
+              お名前
+            </label>
+            <div class="mt-2.5">
+              <input
+                type="text"
+                name="name"
+                id="name"
+                required
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div class="sm:col-span-2">
+            <label for="email" class="block text-sm font-semibold leading-6 text-gray-900">
+              メールアドレス
+            </label>
+            <div class="mt-2.5">
+              <input
+                type="email"
+                name="email"
+                id="email"
+                required
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div class="sm:col-span-2">
+            <label for="phone" class="block text-sm font-semibold leading-6 text-gray-900">
+              電話番号
+            </label>
+            <div class="mt-2.5">
+              <input
+                type="tel"
+                name="phone"
+                id="phone"
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+          <div class="sm:col-span-2">
+            <label for="message" class="block text-sm font-semibold leading-6 text-gray-900">
+              お問い合わせ内容
+            </label>
+            <div class="mt-2.5">
+              <textarea
+                name="message"
+                id="message"
+                rows={4}
+                required
+                class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="mt-10">
+          <button
+            type="submit"
+            class="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            送信する
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <Footer slot="footer" />
+</Layout>
+
+<script>
+  const form = document.querySelector('form');
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = Object.fromEntries(formData.entries());
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        alert('お問い合わせを受け付けました。');
+        (e.target as HTMLFormElement).reset();
+      } else {
+        throw new Error('送信に失敗しました。');
+      }
+    } catch (error) {
+      alert('エラーが発生しました。時間をおいて再度お試しください。');
+      console.error(error);
+    }
+  });
+</script> 

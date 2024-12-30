@@ -1,0 +1,131 @@
+---
+interface Props {
+	counselorId: string;
+}
+
+const { counselorId } = Astro.props;
+---
+
+<section id="contact-form" class="bg-gray-50 py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl text-center">
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">資料請求・お問い合わせ</h2>
+      <p class="mt-2 text-lg leading-8 text-gray-600">
+        ご興味をお持ちの方は、以下のフォームよりお気軽にお問い合わせください
+      </p>
+    </div>
+    <form id="contact-form-element" action="/api/contact" method="POST" class="mx-auto mt-16 max-w-xl sm:mt-20">
+      <input type="hidden" name="counselorId" value={counselorId} />
+      <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div class="sm:col-span-2">
+          <label for="name" class="block text-sm font-semibold leading-6 text-gray-900">
+            お名前
+          </label>
+          <div class="mt-2.5">
+            <input
+              type="text"
+              name="name"
+              id="name"
+              required
+              class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+        <div class="sm:col-span-2">
+          <label for="email" class="block text-sm font-semibold leading-6 text-gray-900">
+            メールアドレス
+          </label>
+          <div class="mt-2.5">
+            <input
+              type="email"
+              name="email"
+              id="email"
+              required
+              class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+        <div class="sm:col-span-2">
+          <label for="phone" class="block text-sm font-semibold leading-6 text-gray-900">
+            電話番号
+          </label>
+          <div class="mt-2.5">
+            <input
+              type="tel"
+              name="phone"
+              id="phone"
+              class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+        <div class="sm:col-span-2">
+          <label for="message" class="block text-sm font-semibold leading-6 text-gray-900">
+            お問い合わせ内容
+          </label>
+          <div class="mt-2.5">
+            <textarea
+              name="message"
+              id="message"
+              rows="4"
+              required
+              class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="mt-10">
+        <button
+          type="submit"
+          class="block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          送信する
+        </button>
+      </div>
+      <div id="contact-message" class="mt-4 text-center hidden">
+        <p class="text-sm"></p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  const form = document.getElementById('contact-form-element') as HTMLFormElement;
+  const messageDiv = document.getElementById('contact-message');
+  const messageParagraph = messageDiv?.querySelector('p');
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!messageDiv || !messageParagraph) return;
+
+      try {
+        const formData = new FormData(form);
+        const response = await fetch(form.action, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        
+        messageDiv.classList.remove('hidden');
+        messageParagraph.textContent = data.message;
+        
+        if (response.ok) {
+          messageDiv.classList.add('text-green-600');
+          messageDiv.classList.remove('text-red-600');
+          form.reset();
+        } else {
+          messageDiv.classList.add('text-red-600');
+          messageDiv.classList.remove('text-green-600');
+        }
+      } catch (error) {
+        console.error(error);
+        messageDiv.classList.remove('hidden');
+        messageDiv.classList.add('text-red-600');
+        messageDiv.classList.remove('text-green-600');
+        messageParagraph.textContent = 'エラーが発生しました。時間をおいて再度お試しください。';
+      }
+    });
+  }
+</script> 

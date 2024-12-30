@@ -1,0 +1,57 @@
+---
+const features = [
+	{
+		name: "厳選された相談所",
+		description:
+			"加盟相談所は厳格な審査基準をクリアした信頼できる相談所のみ。安心して婚活を始められます。",
+		icon: "🏢",
+	},
+	{
+		name: "充実のサポート体制",
+		description:
+			"経験豊富なカウンセラーが、あなたの理想の結婚をサポート。きめ細やかなアドバイスを提供します。",
+		icon: "👥",
+	},
+	{
+		name: "豊富な出会いの機会",
+		description:
+			"全国の加盟相談所のネットワークを活かし、より多くの出会いの機会を提供します。",
+		icon: "💝",
+	},
+	{
+		name: "安心の料金体系",
+		description:
+			"明確な料金体系で、追加料金の心配なし。あなたの予算に合わせた婚活プランをご用意。",
+		icon: "💰",
+	},
+];
+---
+
+<section id="features" class="bg-white py-24 sm:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="mx-auto max-w-2xl lg:text-center">
+      <h2 class="text-base font-semibold leading-7 text-indigo-600">選ばれる理由</h2>
+      <p class="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+        結婚相談所連盟が選ばれる4つの理由
+      </p>
+      <p class="mt-6 text-lg leading-8 text-gray-600">
+        私たちは、あなたの幸せな結婚をトータルでサポートします
+      </p>
+    </div>
+    <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
+      <dl class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-4">
+        {features.map((feature) => (
+          <div class="flex flex-col">
+            <dt class="flex items-center gap-x-3 text-base font-semibold leading-7 text-gray-900">
+              <span class="text-3xl">{feature.icon}</span>
+              {feature.name}
+            </dt>
+            <dd class="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+              <p class="flex-auto">{feature.description}</p>
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </div>
+</section> 

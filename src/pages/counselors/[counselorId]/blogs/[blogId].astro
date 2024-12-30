@@ -1,0 +1,77 @@
+---
+import Layout from "../../../../layouts/Layout.astro";
+import Header from "../../../../components/Header.astro";
+import Footer from "../../../../components/Footer.astro";
+import { blogPosts } from "../../../../data/blogs";
+import { counselors } from "../../../../data/counselors";
+import type { GetStaticPaths } from "astro";
+
+export const getStaticPaths = (() => {
+	return blogPosts.map((post) => ({
+		params: {
+			counselorId: post.counselorId,
+			blogId: post.id,
+		},
+		props: { post },
+	}));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props;
+const counselor = counselors.find((c) => c.id === post.counselorId);
+
+const formatDate = (dateString: string) => {
+	return new Date(dateString).toLocaleDateString("ja-JP", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+};
+---
+
+<Layout title={`${post.title} - ${counselor?.name || ''}`} description={post.excerpt}>
+  <Header slot="header" />
+  <article class="bg-white py-24 sm:py-32">
+    <div class="mx-auto max-w-3xl px-6 lg:px-8">
+      <div class="mx-auto max-w-2xl text-center">
+        <div class="flex items-center justify-center gap-x-4 text-xs">
+          <time datetime={post.publishedAt} class="text-gray-500">
+            {formatDate(post.publishedAt)}
+          </time>
+          <a
+            href={`/counselors/${post.counselorId}`}
+            class="relative z-10 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+          >
+            {counselor?.name}
+          </a>
+        </div>
+        <h1 class="mt-6 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          {post.title}
+        </h1>
+        <div class="mt-4 flex justify-center flex-wrap gap-2">
+          {post.tags.map((tag) => (
+            <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {post.imageUrl && (
+        <div class="relative mt-16 aspect-[16/9]">
+          <img
+            src={post.imageUrl}
+            alt={post.title}
+            class="absolute inset-0 h-full w-full rounded-2xl bg-gray-100 object-cover"
+          />
+        </div>
+      )}
+
+      <div class="mx-auto mt-16 max-w-2xl">
+        <div class="prose prose-lg prose-indigo mx-auto">
+          {post.content}
+        </div>
+      </div>
+    </div>
+  </article>
+  <Footer slot="footer" />
+</Layout> 
