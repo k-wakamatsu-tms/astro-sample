@@ -46,6 +46,15 @@ output: 'static'  // 静的サイト生成（SSG）モード
   - データはビルド時に固定
   - コンテンツ更新時は再ビルドが必要
 
+#### 参照方法
+```astro
+---
+const { data } = await getCollection("counselors");
+---
+
+console.log(data);
+```
+
 - 参考: https://docs.astro.build/ja/guides/content-layer/
 
 ### Server Islands
